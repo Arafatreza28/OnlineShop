@@ -1,4 +1,4 @@
-﻿@model IEnumerable<OnlineShop.Models.ProductTypes>
+﻿@model IEnumerable<OnlineShop.Models.SpecialTag>
 @{
     ViewData["Title"] = "Index";
 }
@@ -7,10 +7,10 @@
 
 <div class="row">
     <div class="col-6">
-        <h2 class="text-info"> Product Type List</h2>
+        <h2 class="text-info"> Special Tag List</h2>
     </div>
     <div class="col-6 text-right">
-        <a asp-action="Create" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp; New Product Type</a>
+        <a asp-action="Create" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp; New Special Tag</a>
     </div>
 </div>
 <br />
@@ -18,24 +18,24 @@
     <table class="table table-striped tab-content">
         <tr class="text-info">
             <th>
-                @Html.DisplayNameFor(c => c.ProductType)
+                @Html.DisplayNameFor(c => c.SpecialTags)
             </th>
             <th></th>
             <th></th>
         </tr>
-        @foreach (var product in Model)
+        @foreach (var specialTag in Model)
         {
             <tr>
-                <td>@product.ProductType</td>
-                <td> <partial name="_ButtonPartialView" model="@product.Id" /> </td>
+                <td>@specialTag.SpecialTags</td>
+                <td> <partial name="_SpecialTagButtonPartialView" model="@specialTag.Id" /> </td>
             </tr>
         }
 
     </table>
 </div>
 @section Scripts{
-<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
-<script type="text/javascript">
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <script type="text/javascript">
     $(function(){
         var save = '@TempData["save"]'
         var edit = '@TempData["edit"]'
@@ -49,6 +49,7 @@
         if (deleted!='') {
             alertify.error(deleted);
         }
-    })  
-</script>
+    })
+    </script>
+   
 }

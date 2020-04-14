@@ -9,18 +9,17 @@ using OnlineShop.Models;
 namespace OnlineShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class ProductTypesController : Controller
+    public class SpecialTagController : Controller
     {
         private readonly ApplicationDbContext _applicationDbContext;
 
-        public ProductTypesController(ApplicationDbContext applicationDbContext)
+        public SpecialTagController(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }
         public IActionResult Index()
         {
-           // var data = _applicationDbContext.ProductTypes.ToList();
-            return View(_applicationDbContext.ProductTypes.ToList());
+            return View(_applicationDbContext.SpecialTags.ToList());
         }
         public ActionResult Create()
         {
@@ -28,42 +27,42 @@ namespace OnlineShop.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProductTypes productTypes)
-        {
-            if(ModelState.IsValid)
-            {
-                _applicationDbContext.ProductTypes.Add(productTypes);
-                await _applicationDbContext.SaveChangesAsync();
-                TempData["save"] = "Product type has been saved";
-                return RedirectToAction(nameof(Index));
-            }
-            return View(productTypes);
-        }
-        public ActionResult Edit(int? id)
-        {
-            if(id == null)
-            {
-                return NotFound();
-            }
-            var productTypes = _applicationDbContext.ProductTypes.Find(id);
-            if (productTypes == null)
-            {
-                return NotFound();
-            }
-            return View(productTypes);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ProductTypes productTypes)
+        public async Task<IActionResult> Create(SpecialTag specialTag)
         {
             if (ModelState.IsValid)
             {
-                _applicationDbContext.ProductTypes.Update(productTypes);
+                _applicationDbContext.SpecialTags.Add(specialTag);
                 await _applicationDbContext.SaveChangesAsync();
-                TempData["edit"] = "Product type has been edited";
+                TempData["save"] = "Special Tag has been saved";
                 return RedirectToAction(nameof(Index));
             }
-            return View(productTypes);
+            return View(specialTag);
+        }
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var specialTag = _applicationDbContext.SpecialTags.Find(id);
+            if (specialTag == null)
+            {
+                return NotFound();
+            }
+            return View(specialTag);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(SpecialTag specialTag)
+        {
+            if (ModelState.IsValid)
+            {
+                _applicationDbContext.SpecialTags.Update(specialTag);
+                await _applicationDbContext.SaveChangesAsync();
+                TempData["edit"] = "Special Tag has been edited";
+                return RedirectToAction(nameof(Index));
+            }
+            return View(specialTag);
         }
         public ActionResult Details(int? id)
         {
@@ -71,12 +70,12 @@ namespace OnlineShop.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            var productTypes = _applicationDbContext.ProductTypes.Find(id);
-            if (productTypes == null)
+            var specialTag = _applicationDbContext.SpecialTags.Find(id);
+            if (specialTag == null)
             {
                 return NotFound();
             }
-            return View(productTypes);
+            return View(specialTag);
         }
         public ActionResult Delete(int? id)
         {
@@ -84,39 +83,39 @@ namespace OnlineShop.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            var productTypes = _applicationDbContext.ProductTypes.Find(id);
-            if (productTypes == null)
+            var specialTag = _applicationDbContext.SpecialTags.Find(id);
+            if (specialTag == null)
             {
                 return NotFound();
             }
-            return View(productTypes);
+            return View(specialTag);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int? id,ProductTypes productTypes)
+        public async Task<IActionResult> Delete(int? id, SpecialTag specialTag)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            if (id != productTypes.Id)
+            if (id != specialTag.Id)
             {
                 return NotFound();
             }
 
-            var productType = _applicationDbContext.ProductTypes.Find(id);
-            if (productType == null)
+            var specialTags = _applicationDbContext.SpecialTags.Find(id);
+            if (specialTags == null)
             {
                 return NotFound();
             }
             if (ModelState.IsValid)
             {
-                _applicationDbContext.Remove(productType);
+                _applicationDbContext.Remove(specialTags);
                 await _applicationDbContext.SaveChangesAsync();
-                TempData["delete"] = "Product type has been deleted";
+                TempData["delete"] = "Special Tag has been deleted";
                 return RedirectToAction(nameof(Index));
             }
-            return View(productTypes);
+            return View(specialTags);
         }
     }
 }

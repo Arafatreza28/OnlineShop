@@ -1,14 +1,15 @@
 ﻿@model OnlineShop.Models.ProductTypes
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
 }
 <br />
-<h2 class="text-info">Create Product Types</h2>
+<h2 class="text-info">Edit Product Types</h2>
 <br />
 <br />
-<form asp-action="Create" method="post">
+<form asp-action="Edit" method="post">
     <div class="p-4 rounded table-bordered">
         <br />
+        <input type="hidden" asp-for="Id" />
         <div asp-validation-summary="ModelOnly" class="text-danger">
         </div>
         <div class="form-group row">
@@ -21,7 +22,7 @@
             <span asp-validation-for="ProductType" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <input type="submit" class="btn btn-primary" value="Save" />
+            <input type="submit" class="btn btn-primary" value="Update" />
             <a asp-action="Index" class="btn btn-success"> Back to List </a>
         </div>
     </div>
