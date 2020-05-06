@@ -91,14 +91,10 @@ namespace OnlineShop.Areas.Admin.Controllers
             return View(specialTag);
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int? id, SpecialTag specialTag)
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirm(int? id)
         {
             if (id == null)
-            {
-                return NotFound();
-            }
-            if (id != specialTag.Id)
             {
                 return NotFound();
             }

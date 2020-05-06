@@ -15,25 +15,39 @@
 </div>
 <br />
 <div>
-    <table class="table table-striped tab-content">
-        <tr class="text-info">
-            <th>
-                @Html.DisplayNameFor(c => c.SpecialTags)
-            </th>
-            <th></th>
-            <th></th>
-        </tr>
-        @foreach (var specialTag in Model)
-        {
-            <tr>
-                <td>@specialTag.SpecialTags</td>
-                <td> <partial name="_SpecialTagButtonPartialView" model="@specialTag.Id" /> </td>
+    <table id="myTable" class="table table-striped tab-content">
+        <thead>
+            <tr class="text-info">
+                <th>
+                    @Html.DisplayNameFor(c => c.SpecialTags)
+                </th>
+                <th></th>
+                <th></th>
             </tr>
-        }
+        </thead>
+        <tbody>
+            @foreach (var specialTag in Model)
+            {
+                <tr>
+                    <td>@specialTag.SpecialTags</td>
+                    <td> <partial name="_SpecialTagButtonPartialView" model="@specialTag.Id" /> </td>
+                </tr>
+            }
+        </tbody>
 
     </table>
 </div>
 @section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'excel', 'print'
+                ]
+            });
+        });
+    </script>
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <script type="text/javascript">
     $(function(){
@@ -51,5 +65,5 @@
         }
     })
     </script>
-   
+
 }

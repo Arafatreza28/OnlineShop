@@ -29,6 +29,17 @@ namespace OnlineShop.Areas.Admin.Controllers
         {
              return View(_applicationDbContext.Products.Include(c=>c.ProductTypes).Include(s=>s.SpecialTag).ToList());
         }
+        [HttpPost]
+        public IActionResult Index(decimal? lowAmount,decimal? largeAmount)
+        {
+            var products = _applicationDbContext.Products.Include(c => c.ProductTypes).Include(c => c.SpecialTag).Where(c=>c.Price>=lowAmount&&c.Price<=largeAmount);
+            if(lowAmount == null || largeAmount == null)
+            {
+                var product = _applicationDbContext.Products.Include(c => c.ProductTypes).Include(c => c.SpecialTag).ToList();
+                return View(product);
+            }
+            return View(products);
+        }
         public ActionResult Create()
         {
             ViewData["productTypesId"] = new SelectList(_applicationDbContext.ProductTypes.ToList(), "Id", "ProductType");
@@ -39,6 +50,14 @@ namespace OnlineShop.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Product product,IFormFile image)
         {
+            var searchProduct = _applicationDbContext.Products.Where(c=>c.Name==product.Name);
+            if (searchProduct.Count() != 0)
+            {
+                ViewBag.message = "This Product is already exist!";
+                ViewData["productTypesId"] = new SelectList(_applicationDbContext.ProductTypes.ToList(), "Id", "ProductType");
+                ViewData["specialTagId"] = new SelectList(_applicationDbContext.SpecialTags.ToList(), "Id", "SpecialTags");
+                return View(product);
+            }
             if (ModelState.IsValid)
             {
                 if(image!=null)
@@ -47,6 +66,10 @@ namespace OnlineShop.Areas.Admin.Controllers
                     await image.CopyToAsync(new FileStream(name, FileMode.Create));
                     product.Image = "images/" + image.FileName;
                 }
+                if(image==null)
+                {
+                    product.Image = "images/no-image.png";
+                }
                 _applicationDbContext.Products.Add(product);
                 await _applicationDbContext.SaveChangesAsync();
                 TempData["save"] = "Product has been saved";
@@ -54,84 +77,94 @@ namespace OnlineShop.Areas.Admin.Controllers
             }
             return View(product);
         }
-        //public ActionResult Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var specialTag = _applicationDbContext.SpecialTags.Find(id);
-        //    if (specialTag == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(specialTag);
-        //}
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(SpecialTag specialTag)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _applicationDbContext.SpecialTags.Update(specialTag);
-        //        await _applicationDbContext.SaveChangesAsync();
-        //        TempData["edit"] = "Special Tag has been edited";
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(specialTag);
-        //}
-        //public ActionResult Details(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var specialTag = _applicationDbContext.SpecialTags.Find(id);
-        //    if (specialTag == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(specialTag);
-        //}
-        //public ActionResult Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var specialTag = _applicationDbContext.SpecialTags.Find(id);
-        //    if (specialTag == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(specialTag);
-        //}
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Delete(int? id, SpecialTag specialTag)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    if (id != specialTag.Id)
-        //    {
-        //        return NotFound();
-        //    }
+        public ActionResult Edit(int? id)
+        {
+            ViewData["productTypesId"] = new SelectList(_applicationDbContext.ProductTypes.ToList(), "Id", "ProductType");
+            ViewData["specialTagId"] = new SelectList(_applicationDbContext.SpecialTags.ToList(), "Id", "SpecialTags");
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var product = _applicationDbContext.Products.Include(c => c.ProductTypes).Include(c => c.SpecialTag).FirstOrDefault(c => c.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Product product, IFormFile image)
+        {
+            if (image != null)
+            {
+                var name = Path.Combine(_hostingEnvironment.WebRootPath + "/images", Path.GetFileName(image.FileName));
+                await image.CopyToAsync(new FileStream(name, FileMode.Create));
+                product.Image = "images/" + image.FileName;
+            }
+            if (image == null)
+            {
+                //var pro = _applicationDbContext.Products.Where(c=>c.Id == product.Id).LastOrDefault();
+                //product.Image = pro.Image;
+                product.Image = "images/no-image.png";
+            }
+            if (ModelState.IsValid)
+            {
+                _applicationDbContext.Products.Update(product);
+                await _applicationDbContext.SaveChangesAsync();
+                TempData["edit"] = "Product has been edited";
+                return RedirectToAction(nameof(Index));
+            }
+            return View(product);
+        }
+        public ActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var product = _applicationDbContext.Products.Include(c => c.ProductTypes).Include(c => c.SpecialTag).FirstOrDefault(c => c.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var product = _applicationDbContext.Products.Include(c => c.ProductTypes).Include(c => c.SpecialTag).FirstOrDefault(c => c.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
+        [HttpPost]
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirm(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var specialTags = _applicationDbContext.SpecialTags.Find(id);
-        //    if (specialTags == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    if (ModelState.IsValid)
-        //    {
-        //        _applicationDbContext.Remove(specialTags);
-        //        await _applicationDbContext.SaveChangesAsync();
-        //        TempData["delete"] = "Special Tag has been deleted";
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(specialTags);
-        //}
+            var products = _applicationDbContext.Products.Find(id);
+            if (products == null)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                _applicationDbContext.Remove(products);
+                await _applicationDbContext.SaveChangesAsync();
+                TempData["delete"] = "Product has been deleted";
+                return RedirectToAction(nameof(Index));
+            }
+            return View(products);
+        }
     }
 }

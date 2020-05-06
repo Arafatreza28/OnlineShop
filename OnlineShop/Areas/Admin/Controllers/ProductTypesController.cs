@@ -92,14 +92,10 @@ namespace OnlineShop.Areas.Admin.Controllers
             return View(productTypes);
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int? id,ProductTypes productTypes)
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirm(int? id)
         {
             if (id == null)
-            {
-                return NotFound();
-            }
-            if (id != productTypes.Id)
             {
                 return NotFound();
             }
@@ -116,7 +112,7 @@ namespace OnlineShop.Areas.Admin.Controllers
                 TempData["delete"] = "Product type has been deleted";
                 return RedirectToAction(nameof(Index));
             }
-            return View(productTypes);
+            return View(productType);
         }
     }
 }
